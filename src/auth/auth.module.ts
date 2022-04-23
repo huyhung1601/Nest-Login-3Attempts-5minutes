@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   controllers: [AuthController],
   imports: [
+    ConfigModule.forRoot(),
     UsersModule,
     PassportModule,
     JwtModule.register({
