@@ -1,18 +1,35 @@
+import { JwtModule } from '@nestjs/jwt';
+import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
+import { UsersModule } from '../users/users.module';
+import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { LocalStrategy } from './local.strategy';
 
 describe('AuthService', () => {
-  let service: AuthService;
+  let authService: AuthService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [AuthService],
+      controllers: [AuthController],
+      imports: [
+        UsersModule,
+        JwtModule.register({
+          secret: 'SECRET',
+          signOptions: { expiresIn: 60 * 5 },
+        }),
+      ],
+      providers: [
+        AuthService,
+        { provide: getModelToken('Users'), useValue: {} },
+        LocalStrategy,
+      ],
     }).compile();
 
-    service = module.get<AuthService>(AuthService);
+    authService = module.get<AuthService>(AuthService);
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(authService).toBeDefined();
   });
 });
