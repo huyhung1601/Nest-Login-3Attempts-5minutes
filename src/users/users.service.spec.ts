@@ -9,7 +9,7 @@ describe('UsersService', () => {
   const mockUsersModel = {
     findOne: jest
       .fn()
-      .mockImplementation((userName) =>
+      .mockImplementation(() =>
         Promise.resolve({ id: new Date().toString(), ...({} as User) }),
       ),
   };
@@ -19,7 +19,7 @@ describe('UsersService', () => {
       providers: [
         UsersService,
         {
-          provide: getModelToken('Users'),
+          provide: getModelToken('User'),
           useValue: mockUsersModel,
         },
       ],
@@ -36,7 +36,7 @@ describe('UsersService', () => {
     it('should return object of user', async () => {
       expect(await service.findUser('admin')).toEqual({
         id: expect.any(String),
-        ...({} as Number),
+        ...({} as User),
       });
     });
   });
