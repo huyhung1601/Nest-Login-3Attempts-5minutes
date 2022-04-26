@@ -1,11 +1,10 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersModule } from '../users/test/users.module';
-import { User } from '../users/user.model';
-import { UsersService } from '../users/users.service';
-import { AuthController } from './test/auth.controller';
-import { AuthService } from './test/auth.service';
+import { User } from '../../users/user.model';
+import { AuthController } from '../auth.controller';
+import { AuthService } from '../auth.service';
 import { getModelToken } from '@nestjs/mongoose';
+import { UsersModule } from '../../users/users.module';
 
 describe('AuthController', () => {
   let controller: AuthController;

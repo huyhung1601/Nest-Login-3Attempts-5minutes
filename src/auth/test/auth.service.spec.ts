@@ -1,25 +1,27 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from '../users/users.service';
-import { AuthService } from './test/auth.service';
-import { User } from '../users/user.model';
+import { UsersService } from '../../users/users.service';
+import { AuthService } from '../auth.service';
+import { User } from '../../users/user.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { UsersModule } from '../users/test/users.module';
+import { UsersModule } from '../../users/users.module';
+import mongoose from 'mongoose';
 
 describe('AuthService', () => {
-  let authService: typeof mockAuthService;
+  let authService: AuthService;
   let userService: UsersService;
   let user: any;
 
+  const mockuser = { username: 'admin', password: 'admin' };
+
   const mockUsersModel = {
     findOne: jest.fn().mockResolvedValue({
-      id: '',
+      id: 'id',
       username: 'admin',
       password: 'admin',
       locked: false,
       attempts: 0,
     }),
-    save: jest.fn(),
   };
 
   const mockAuthService = {
@@ -47,17 +49,18 @@ describe('AuthService', () => {
           signOptions: { expiresIn: 60 * 5 },
         }),
       ],
-      providers: [
-        { provide: AuthService, useValue: mockAuthService },
-        { provide: UsersService, useValue: {} },
-      ],
+      providers: [AuthService, { provide: UsersService, useValue: {} }],
     })
       .overrideProvider(getModelToken('User'))
       .useValue(mockUsersModel)
       .compile();
 
+    beforeEach(function (done) {
+      const conn = mongoose.createConnection();
+    });
+
     userService = module.get<UsersService>(UsersService);
-    authService = module.get<any>(AuthService);
+    authService = module.get<AuthService>(AuthService);
 
     user = await userService.findUser('admin');
   });
@@ -72,26 +75,27 @@ describe('AuthService', () => {
     });
     it('create token when users start logging in', async () => {
       if (!user.access_token) {
-        expect(authService.createToken()).toEqual({
-          access_token: expect.any(String),
-        });
-        expect(await authService.user.save()).toEqual({
+        expect(authService.createToken(user.username, user.id)).toEqual<string>(
+          expect.any(String),
+        );
+        expect(await user.save()).toEqual({
           id: expect.any(String),
           ...({} as User),
         });
       }
     });
     it('return userInfo if password matched within 5mins and 3 attempts', async () => {
-      const expires = authService.decodeToken();
+      const expires = authService.decodeToken(user.access_token);
       expect(expires).toEqual({ expires: expect.any(Number) });
       const timeleft = Math.floor(expires - new Date().getTime() / 1000);
-      const mockuser = { username: 'admin', password: 'admin' };
 
       user &&
         !user.locked &&
         user.password === mockuser.password &&
         timeleft > 0 &&
-        expect(await authService.validateUser(mockuser)).toEqual({
+        expect(
+          await authService.validateUser(mockuser.username, mockuser.password),
+        ).toEqual({
           id: expect.any(String),
           ...({} as User),
         });
@@ -100,7 +104,9 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return access_token', async () => {
-      expect(await authService.login()).toEqual({
+      expect(
+        await authService.login(mockuser.username, mockuser.password),
+      ).toEqual({
         access_token: 'access_token',
       });
     });

@@ -1,12 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AuthModule } from '../src/auth/auth.module';
-import { UsersService } from '../src/users/users.service';
-import { AuthService } from '../src/auth/test/auth.service';
+import { AuthService } from '../src/auth/auth.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from '../src/users/user.model';
-import { AuthController } from '../src/auth/test/auth.controller';
+import { AuthController } from '../src/auth/auth.controller';
 import { LocalStrategy } from '../src/auth/local.strategy';
 
 describe('AuthController (e2e)', () => {
