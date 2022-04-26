@@ -1,20 +1,20 @@
 ## Description
 
-This project has been built with Nestjs, MongoDB, PassportJs and Docker
-Feature: Limit Login within 3 attempts and 5 minutes
-Tech: I have used @nestjs/passport-local and @nestjs/jwt for the validation
--- Server will determine user valid or not:
----- if not return false
----- if yes:
-------- first check user is locked or not (return false if true)
-------- then create a JWT expires in 5 minutes for first login
------------- if wrong password: attempts + 1 (user will be locked when attempts reach 3) and return false
------------- user is locked if JWT expired
------------- return access_token (& refresh_token suggested) if password match within 3 attempts and 5 minutes
+This project has been built with Nestjs, MongoDB, PassportJs and Docker <br />
+Feature: Limit Login within 3 attempts and 5 minutes <br />
+Tech: I have used @nestjs/passport-local and @nestjs/jwt for the validation <br />
+-- Server will determine user valid or not: <br />
+---- if not return false<br />
+---- if yes:<br />
+------- first check user is locked or not (return false if true)<br />
+------- then create a JWT expires in 5 minutes for first login<br />
+------------ if wrong password: attempts + 1 (user will be locked when attempts reach 3) and return false<br />
+------------ user is locked if JWT expired<br />
+------------ return access_token (& refresh_token suggested) if password match within 3 attempts and 5 minutes<br />
 
 ## Design Doc
 
-![Screenshot](loginChart.png)
+![Alt text](relative/path/to/img.jpg?raw=true 'Title')
 
 ## Run docker
 
