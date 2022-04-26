@@ -17,8 +17,10 @@ Tech: I have used @nestjs/passport-local and @nestjs/jwt for the validation <br 
 ![Alt text](https://github.com/huyhung1601/Nest-Login-3Attempts-5minutes/blob/modification/loginChart.jpg?raw=true)
 
 ## Create .env
-MONGODB_URL = your mongodb_url
+```bash
+MONGODB_URL = your mongodb_url <br/>
 SECRET = your token secret key
+```
 
 ## Run docker
 
