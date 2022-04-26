@@ -1,21 +1,25 @@
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../users/users.service';
-import { AuthService } from './auth.service';
+import { AuthService } from './test/auth.service';
 import { User } from '../users/user.model';
+import { getModelToken } from '@nestjs/mongoose';
+import { UsersModule } from '../users/test/users.module';
 
 describe('AuthService', () => {
   let authService: typeof mockAuthService;
   let userService: UsersService;
   let user: any;
-  const mockUsersService = {
-    findUser: jest.fn().mockResolvedValue({
+
+  const mockUsersModel = {
+    findOne: jest.fn().mockResolvedValue({
       id: '',
       username: 'admin',
       password: 'admin',
       locked: false,
       attempts: 0,
     }),
+    save: jest.fn(),
   };
 
   const mockAuthService = {
@@ -37,6 +41,7 @@ describe('AuthService', () => {
   beforeAll(async () => {
     const module: TestingModule = await Test.createTestingModule({
       imports: [
+        UsersModule,
         JwtModule.register({
           secret: 'SECRET',
           signOptions: { expiresIn: 60 * 5 },
@@ -44,9 +49,12 @@ describe('AuthService', () => {
       ],
       providers: [
         { provide: AuthService, useValue: mockAuthService },
-        { provide: UsersService, useValue: mockUsersService },
+        { provide: UsersService, useValue: {} },
       ],
-    }).compile();
+    })
+      .overrideProvider(getModelToken('User'))
+      .useValue(mockUsersModel)
+      .compile();
 
     userService = module.get<UsersService>(UsersService);
     authService = module.get<any>(AuthService);

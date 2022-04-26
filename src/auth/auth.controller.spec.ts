@@ -1,9 +1,11 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
+import { UsersModule } from '../users/test/users.module';
 import { User } from '../users/user.model';
 import { UsersService } from '../users/users.service';
-import { AuthController } from './auth.controller';
-import { AuthService } from './auth.service';
+import { AuthController } from './test/auth.controller';
+import { AuthService } from './test/auth.service';
+import { getModelToken } from '@nestjs/mongoose';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -15,16 +17,17 @@ describe('AuthController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       imports: [
+        UsersModule,
         JwtModule.register({
           secret: 'SECRET',
           signOptions: { expiresIn: 60 * 5 },
         }),
       ],
-      providers: [
-        { provide: AuthService, useValue: mockAuthService },
-        { provide: UsersService, useValue: {} },
-      ],
-    }).compile();
+      providers: [{ provide: AuthService, useValue: mockAuthService }],
+    })
+      .overrideProvider(getModelToken('User'))
+      .useValue({})
+      .compile();
 
     controller = module.get<AuthController>(AuthController);
   });

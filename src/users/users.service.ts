@@ -7,8 +7,8 @@ import { Model } from 'mongoose';
 export class UsersService {
   constructor(@InjectModel('User') public readonly userModel: Model<User>) {}
 
-  async findUser(userName: string): Promise<User | undefined> {
-    const user = await this.userModel.findOne({ userName });
+  async findUser(username: string): Promise<User | undefined> {
+    const user = await this.userModel.findOne({ username });
     return user;
   }
 }
