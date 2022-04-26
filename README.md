@@ -14,11 +14,13 @@ Tech: I have used @nestjs/passport-local and @nestjs/jwt for the validation <br 
 
 ## Design Doc
 
-![Alt text](relative/path/to/loginChart.jpg?raw=true 'Title')
+![Alt text](https://github.com/huyhung1601/Nest-Login-3Attempts-5minutes/blob/modification/loginChart.jpg?raw=true)
 
 ## Run docker
 
+```bash
 docker compose up
+```
 
 ## Installation
 
