@@ -14,7 +14,7 @@ Tech: I have used @nestjs/passport-local and @nestjs/jwt for the validation <br 
 
 ## Design Doc
 
-![Alt text](relative/path/to/img.jpg?raw=true 'Title')
+![Alt text](relative/path/to/loginChart.jpg?raw=true 'Title')
 
 ## Run docker
 
