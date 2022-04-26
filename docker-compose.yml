@@ -1,0 +1,16 @@
+#docker-compose file
+version: '3'
+
+services:
+  nestapp:
+    container_name: nestapp
+    image: nestapp:0.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/usr/app/
+    ports:
+      - '5000:5000'
+    env_file:
+      - .env
