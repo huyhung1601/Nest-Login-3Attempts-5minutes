@@ -1,8 +1,8 @@
-import { JwtModule, JwtService } from '@nestjs/jwt';
+import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { UsersService } from '../users/users.service';
-import { AuthService } from './auth.service';
-import { User } from '../users/user.model';
+import { UsersService } from '../../users/users.service';
+import { AuthService } from '../auth.service';
+import { User } from '../../users/user.model';
 
 describe('AuthService', () => {
   let authService: typeof mockAuthService;

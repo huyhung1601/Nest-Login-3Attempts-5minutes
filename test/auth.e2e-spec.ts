@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AuthModule } from '../src/auth/auth.module';
-import { UsersService } from '../src/users/users.service';
 import { AuthService } from '../src/auth/auth.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { User } from '../src/users/user.model';
