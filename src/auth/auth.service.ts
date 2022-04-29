@@ -20,7 +20,7 @@ export class AuthService {
     if (!user.access_token) {
       const access_token = this.createToken(user.username, user.id);
       user.access_token = access_token;
-      await user.save();
+      await this.userService.saveUser(user);
     }
 
     //check 3 attempts within 5 minutes
@@ -30,7 +30,7 @@ export class AuthService {
     if (user.password !== password) {
       user.attempts += 1;
       user.locked = user.attempts === 3 || timeleft < 0 ? true : false;
-      await user.save();
+      await this.userService.saveUser(user);
     }
 
     if (user && !user.locked && timeleft > 0 && user.password === password) {
@@ -39,7 +39,7 @@ export class AuthService {
       user.access_token = newToken;
       user.attempts = 0;
       user.locked = false;
-      await user.save();
+      await this.userService.saveUser(user);
       return user;
     }
 

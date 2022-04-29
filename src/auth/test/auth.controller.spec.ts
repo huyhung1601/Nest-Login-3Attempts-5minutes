@@ -1,45 +1,56 @@
 import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
-import { User } from '../../users/user.model';
 import { AuthController } from '../auth.controller';
 import { AuthService } from '../auth.service';
 import { getModelToken } from '@nestjs/mongoose';
-import { UsersModule } from '../../users/users.module';
+import { UserModel } from '../../users/__mocks__/user.model';
+import { UsersService } from '../../users/users.service';
+import { PassportModule } from '@nestjs/passport';
 
 describe('AuthController', () => {
-  let controller: AuthController;
+  let authController: AuthController;
+  let usersService: UsersService;
+  let user;
+  let userModel: UserModel;
 
-  const mockAuthService = {
-    login: jest.fn().mockResolvedValue({ id: 'id', ...({} as User) }),
-  };
+  // const mockAuthService = {
+  //   login: jest.fn().mockResolvedValue({ id: 'id', ...({} as User) }),
+  // };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
       imports: [
-        UsersModule,
+        PassportModule,
         JwtModule.register({
           secret: 'SECRET',
           signOptions: { expiresIn: 60 * 5 },
         }),
       ],
-      providers: [{ provide: AuthService, useValue: mockAuthService }],
-    })
-      .overrideProvider(getModelToken('User'))
-      .useValue({})
-      .compile();
+      providers: [
+        AuthService,
+        UsersService,
+        { provide: getModelToken('User'), useClass: UserModel },
+      ],
+    }).compile();
 
-    controller = module.get<AuthController>(AuthController);
+    usersService = module.get<UsersService>(UsersService);
+    authController = module.get<AuthController>(AuthController);
+
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
-    expect(controller).toBeDefined();
+    expect(authController).toBeDefined();
   });
 
   describe('login', () => {
+    beforeEach(async () => {
+      jest.spyOn(usersService, 'findUser');
+      user = await usersService.findUser('admin');
+    });
     it('should return userInfo', async () => {
-      expect(await controller.login('admin', 'admin')).toEqual({
-        id: expect.any(String),
-        ...({} as User),
+      expect(await authController.login('admin', 'admin')).toEqual({
+        access_token: undefined,
       });
     });
   });
