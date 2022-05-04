@@ -11,8 +11,4 @@ export class UsersService {
     const user = await this.userModel.findOne({ username }).exec();
     return user;
   }
-
-  async saveUser(user: any): Promise<User> {
-    return await user.save();
-  }
 }

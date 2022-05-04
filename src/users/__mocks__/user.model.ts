@@ -9,7 +9,6 @@ export interface MockUser {
   access_token?: string;
   attempts: number;
 }
-
 export class UserModel extends MockModel<MockUser> {
-  public entity = userStub();
+  protected entity = userStub();
 }

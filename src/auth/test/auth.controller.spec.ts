@@ -6,16 +6,12 @@ import { getModelToken } from '@nestjs/mongoose';
 import { UserModel } from '../../users/__mocks__/user.model';
 import { UsersService } from '../../users/users.service';
 import { PassportModule } from '@nestjs/passport';
+import { LocalStrategy } from '../local.strategy';
 
 describe('AuthController', () => {
   let authController: AuthController;
   let usersService: UsersService;
-  let user;
-  let userModel: UserModel;
 
-  // const mockAuthService = {
-  //   login: jest.fn().mockResolvedValue({ id: 'id', ...({} as User) }),
-  // };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [AuthController],
@@ -29,6 +25,7 @@ describe('AuthController', () => {
       providers: [
         AuthService,
         UsersService,
+        LocalStrategy,
         { provide: getModelToken('User'), useClass: UserModel },
       ],
     }).compile();
@@ -44,11 +41,7 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    beforeEach(async () => {
-      jest.spyOn(usersService, 'findUser');
-      user = await usersService.findUser('admin');
-    });
-    it('should return userInfo', async () => {
+    it('should return access_token', async () => {
       expect(await authController.login('admin', 'admin')).toEqual({
         access_token: undefined,
       });

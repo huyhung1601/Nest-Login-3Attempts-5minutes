@@ -2,13 +2,10 @@ import { JwtModule } from '@nestjs/jwt';
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from '../../users/users.service';
 import { AuthService } from '../auth.service';
-import { User } from '../../users/user.model';
 import { getModelToken } from '@nestjs/mongoose';
-import { MockUser, UserModel } from '../../users/__mocks__/user.model';
-import { MockModel } from '../../database/test/mock.model';
+import { UserModel } from '../../users/__mocks__/user.model';
 import { userStub } from '../../users/stub/user.stub';
 import { PassportModule } from '@nestjs/passport';
-import { stringify } from 'querystring';
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -44,40 +41,35 @@ describe('AuthService', () => {
   });
 
   describe('validateUser', () => {
-    let entity: UserModel['entity'];
     beforeEach(async () => {
       jest.spyOn(usersService, 'findUser');
       user = await usersService.findUser('admin');
-      entity = user.entity;
       if (user && !user.access_token) {
-        entity.access_token = authService.createToken(
-          entity.username,
-          entity.id,
-        );
+        user.access_token = authService.createToken(user.username, user.id);
       }
     });
 
-    it('should find a user return a user', () => {
-      expect(entity).toEqual({
+    it('should find a user return a user with a token', () => {
+      expect(user).toEqual({
         access_token: expect.any(String),
         ...userStub(),
+        save: expect.any(Function),
       });
     });
 
     it('chech user is not locked', () => {
-      expect(entity.locked).toEqual(expect.any(Boolean));
+      expect(user.locked).toEqual(expect.any(Boolean));
     });
 
     it('create token when users start logging in', async () => {
-      if (!entity.access_token) {
-        const token = authService.createToken(entity.username, entity.id);
+      if (!user.access_token) {
+        const token = authService.createToken(user.username, user.id);
         expect(token).toEqual(expect.any(String));
-        entity.access_token = token;
-        await user.save();
+        user.access_token = token;
       }
     });
     it('check if password matched within 5mins and 3 attempts', async () => {
-      const expires = authService.decodeToken(entity.access_token);
+      const expires = authService.decodeToken(user.access_token);
       expect(expires).toEqual(expect.any(Number));
       const timeleft = Math.floor(expires - new Date().getTime() / 1000);
 

@@ -1,12 +1,5 @@
-import { UserModel } from '../../users/__mocks__/user.model';
-import { userStub } from '../../users/stub/user.stub';
-
-interface Constructor<T> {
-  new (): T;
-}
-
 export class MockModel<T> {
-  public entity: any;
+  protected entity: T;
 
   constructor(createEntityData: T) {
     this.constructorSpy(createEntityData);
@@ -14,17 +7,20 @@ export class MockModel<T> {
 
   constructorSpy(_createEntityData): void {}
 
-  findOne(): { exec: () => any } {
+  findOne() {
+    const data = this.entity;
     return {
-      exec: (): any => new UserModel(this.entity),
+      exec: () => {
+        return {
+          ...data,
+          save: () => this.save(data),
+        };
+      },
     };
   }
 
-  async exec() {
-    return new UserModel(this.entity);
-  }
-
-  async save() {
-    return new UserModel(this.entity);
+  save(data: T) {
+    this.entity = data;
+    return data;
   }
 }

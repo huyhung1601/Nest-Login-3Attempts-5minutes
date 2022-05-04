@@ -2,7 +2,6 @@ import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { FilterQuery } from 'mongoose';
 import { userStub } from '../stub/user.stub';
-import { User } from '../user.model';
 import { UsersService } from '../users.service';
 import { MockUser, UserModel } from '../__mocks__/user.model';
 
@@ -39,22 +38,19 @@ describe('UsersService', () => {
     let user: any;
     beforeEach(async () => {
       jest.spyOn(userModel, 'findOne');
-      user = await usersService.userModel.findOne(userFilterQuery).exec();
+      user = await usersService.findUser('admin');
     });
 
     test('then it should call the userModel', () => {
-      expect(userModel.findOne).toHaveBeenCalledWith(userFilterQuery);
+      expect(usersService.userModel.findOne).toHaveBeenCalledWith(
+        userFilterQuery,
+      );
     });
 
     test('then it should return a user', () => {
       expect(user).toEqual({
-        entity: {
-          attempts: 0,
-          id: 'id1',
-          locked: false,
-          password: 'admin',
-          username: 'admin',
-        },
+        ...userStub(),
+        save: expect.any(Function),
       });
     });
   });
